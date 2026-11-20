@@ -1,0 +1,27 @@
+{
+    "include": [
+        "env.d.ts",
+        "src/renderer/src/**/*",
+        "src/renderer/src/**/*.vue",
+        "src/shared/**/*",
+    ],
+    "compilerOptions": {
+        "target": "es2025",
+        "module": "esnext",
+        "moduleResolution": "bundler",
+        "strict": true,
+        "noUncheckedIndexedAccess": true,
+        "skipLibCheck": false,
+        "lib": [
+            "ES2025",
+            "DOM",
+            "DOM.Iterable"
+        ],
+        "jsx": "preserve",
+        "composite": true,
+        "paths": {
+            "@/*": ["./src/renderer/src/*"],
+            "@shared/*": ["./src/shared/*"],
+        },
+    },
+}

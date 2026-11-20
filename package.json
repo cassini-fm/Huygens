@@ -1,0 +1,39 @@
+{
+  "name": "player",
+  "version": "0.0.0",
+  "main": "index.ts",
+  "scripts": {
+    "dev": "vite",
+    "build": "run-p type-check \"build-only {@}\" --",
+    "preview": "vite preview",
+    "build-only": "vite build",
+    "type-check": "vue-tsc --build",
+    "test:unit": "vitest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cassini-fm/player.git"
+  },
+  "license": "AGPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/cassini-fm/player/issues"
+  },
+  "homepage": "https://github.com/cassini-fm/player#readme",
+  "description": "",
+  "dependencies": {
+    "vue": "^3.5.46",
+    "vue-router": "^5.5.1"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.6",
+    "@vitejs/plugin-vue": "^6.0.11",
+    "electron": "^45.4.1",
+    "electron-builder": "^26.18.0",
+    "electron-vite": "^6.0.0",
+    "sass-embedded": "^1.108.2",
+    "typescript": "^6.0.3",
+    "vite": "^7.3.8",
+    "vitest": "^3.2.7",
+    "vue-tsc": "^3.3.14"
+  }
+}

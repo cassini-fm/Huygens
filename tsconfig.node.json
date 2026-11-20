@@ -1,0 +1,15 @@
+{
+    "include": [
+        "electron.vite.config.*",
+        "vitest.config.*",
+    ],
+    "compilerOptions": {
+        "target": "es2025",
+        "module": "esnext",
+        "moduleResolution": "bundler",
+        "strict": true,
+        "noUncheckedIndexedAccess": true,
+        "types": ["node"],
+        "composite": true
+    }
+}
