@@ -2,6 +2,9 @@
     "include": [
         "electron.vite.config.*",
         "vitest.config.*",
+        "src/**/*",
+        "src/preload/**/*",
+        "src/shared/**/*",
     ],
     "compilerOptions": {
         "target": "es2025",
