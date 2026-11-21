@@ -21,6 +21,17 @@ const migrations = [
     );
     create index idx_listens_played_at on listens (played_at);
     create index idx_listens_unsynced on listens (synced_at) where synced_at is null;
+    `,
+    `create table sources (
+        id integer primary key,
+        kind text not null,
+        name text not null,
+        url text not null,
+        username text not null,
+        secret blob,
+        position integer not null
+    );
+    create index idx_sources_position on sources (position);
     `
 ];
 

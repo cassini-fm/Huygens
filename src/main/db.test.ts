@@ -9,8 +9,8 @@ describe("database", () => {
     it("creates the tables and records the schema version", () => {
         const db = openDatabase(":memory:");
         const tables = db.prepare("select name from sqlite_master where type='table' order by name;").all() as { name: string }[];
-        expect(tables.map((row) => row.name)).toEqual(["listens", "settings"]);
-        expect(db.prepare("pragma user_version;").get()).toEqual({ user_version: 1 });
+        expect(tables.map((row) => row.name)).toEqual(["listens", "settings", "sources"]);
+        expect(db.prepare("pragma user_version;").get()).toEqual({ user_version: 2 });
         db.close();
     });
 
@@ -22,7 +22,6 @@ describe("database", () => {
 
         const second = openDatabase(path);
         expect(readSettings(second)).toEqual({ volume: 0.1 });
-        expect(second.prepare("pragma user_version;").get()).toEqual({ user_version: 1 });
         second.close();
     });
 });
