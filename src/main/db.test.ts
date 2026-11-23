@@ -5,12 +5,14 @@ import { describe, expect, it } from "vitest";
 import { openDatabase } from "./db";
 import { readSettings, writeSettings } from "./settings";
 
+const defaults = { volume: 0.5, theme: "enceladus", mode: "system" };
+
 describe("database", () => {
     it("creates the tables and records the schema version", () => {
         const db = openDatabase(":memory:");
         const tables = db.prepare("select name from sqlite_master where type='table' order by name;").all() as { name: string }[];
-        expect(tables.map((row) => row.name)).toEqual(["listens", "settings", "sources"]);
-        expect(db.prepare("pragma user_version;").get()).toEqual({ user_version: 2 });
+        expect(tables.map((row) => row.name)).toEqual(["cassini", "listens", "settings", "sources"]);
+        expect(db.prepare("pragma user_version;").get()).toEqual({ user_version: 3 });
         db.close();
     });
 
@@ -21,22 +23,24 @@ describe("database", () => {
         first.close();
 
         const second = openDatabase(path);
-        expect(readSettings(second)).toEqual({ volume: 0.1 });
+        expect(readSettings(second)).toEqual({ ...defaults, volume: 0.1 });
         second.close();
     });
 });
 
 describe("settings", () => {
     it("falls back to the defaults", () => {
-        expect(readSettings(openDatabase(":memory:"))).toEqual({ volume: 0.5 });
+        expect(readSettings(openDatabase(":memory:"))).toEqual(defaults);
     });
 
     it("saves changes and ignores unknown keys", () => {
         const db = openDatabase(":memory:");
         writeSettings(db, { volume: 0.1 });
-        expect(readSettings(db)).toEqual({ volume: 0.1 });
+        expect(readSettings(db)).toEqual({ ...defaults, volume: 0.1 });
         writeSettings(db, { volume: 0.2, unknown: "ignored" } as never);
-        expect(readSettings(db)).toEqual({ volume: 0.2 });
+        expect(readSettings(db)).toEqual({ ...defaults, volume: 0.2 });
+        writeSettings(db, { theme: "none" } as never);
+        expect(readSettings(db).theme).toEqual("enceladus");
         db.close();
     });
 });

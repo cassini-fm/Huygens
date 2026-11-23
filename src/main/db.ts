@@ -32,7 +32,14 @@ const migrations = [
         position integer not null
     );
     create index idx_sources_position on sources (position);
-    `
+    `,
+    `create table cassini (
+        id integer primary key check (id = 1),
+        url text not null,
+        username text not null,
+        secret blob not null
+    );
+    `,
 ];
 
 export type Database = DatabaseSync;

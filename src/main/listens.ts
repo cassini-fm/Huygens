@@ -23,7 +23,7 @@ export function unsyncedListens(db: Database, limit = 100): StoredListen[] {
         artists: JSON.parse(row.artists) as string[],
         track: row.track,
         trackId: row.track_id,
-        album: row.album ?? "",
+        album: row.album,
         duration: row.duration,
         isrc: row.isrc,
         source: row.source,
