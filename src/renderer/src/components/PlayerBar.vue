@@ -137,6 +137,7 @@ onMounted(loadVolume);
     gap: 1rem;
 
     button {
+        background: none;
         border: 0;
         color: var(--text);
         cursor: pointer;
