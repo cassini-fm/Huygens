@@ -1,5 +1,6 @@
 import { createHash, randomBytes } from "node:crypto";
 import { createServer } from "node:http";
+import type { SpotifyTrack } from "../shared/api.js";
 
 export const REDIRECT_PORT = 8888;
 export const REDIRECT_URI = `http://127.0.0.1:${REDIRECT_PORT}/callback`;
@@ -96,4 +97,37 @@ export async function currentUser(accessToken: string, fetcher: typeof fetch = f
     if (!response.ok) throw new SpotifyError(`Current user request failed: ${response.status} ${response.statusText}`);
     const me = (await response.json()) as { id: string; display_name: string | null };
     return { id: me.id, name: me.display_name ?? me.id };
+}
+
+type RawTrack = {
+    uri: string;
+    name: string;
+    artists: { name: string }[];
+    album: { name: string; images: { url: string; width: number }[] };
+    duration: number;
+    external_ids?: { isrc?: string };
+}
+
+function toTrack(raw: RawTrack): SpotifyTrack {
+    const images = [...raw.album.images].sort((a, b) => a.width - b.width);
+    const cover = images.find((image) => image.width >= 512) ?? images.at(-1);
+    return {
+        uri: raw.uri,
+        name: raw.name,
+        artists: raw.artists.map((artist) => artist.name),
+        album: raw.album.name,
+        cover: cover?.url ?? null,
+        duration: raw.duration,
+        isrc: raw.external_ids?.isrc ?? null
+    };
+}
+
+export async function searchTracks(token: string, query: string, fetcher: typeof fetch = fetch): Promise<SpotifyTrack[]> {
+    const params = new URLSearchParams({ q: query, type: "track", limit: "10" });
+    const res = await fetcher(`https://api.spotify.com/v1/search?${params}`, {
+        headers: { Authorization: `Bearer ${token}` }
+    });
+    if (!res.ok) throw new SpotifyError(`Spotify search failed: ${res.status} ${res.statusText}`);
+    const body = (await res.json()) as { tracks: { items: RawTrack[] } };
+    return body.tracks.items.map(toTrack);
 }

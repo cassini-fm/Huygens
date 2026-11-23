@@ -113,3 +113,5 @@ export async function next(): Promise<void> {
 export async function previous(): Promise<void> {
     await spotify?.player.previousTrack();
 }
+
+import.meta.hot?.dispose(() => spotify?.disconnect());

@@ -5,6 +5,7 @@ import { readSettings, writeSettings } from "./settings";
 import { type Cipher, systemCipher } from "./secrets.js";
 import { listSources, removeSource, reorderSources } from "./sources.js";
 import { connectSpotify, forgetSpotify, getSpotifyToken } from "./spotifyAccount.js";
+import { searchTracks } from "./spotify";
 
 const db = openDatabase(join(app.getPath("userData"), "player.db"));
 
@@ -58,6 +59,11 @@ ipcMain.handle("api:spotify:connect", async (_event, clientId: string) => {
     return connectSpotify(db, await getCipher(), id, (url) => shell.openExternal(url));
 });
 ipcMain.handle("api:spotify:token", async (_event, id: number) => getSpotifyToken(db, await getCipher(), id));
+ipcMain.handle("api:spotify:search", async (_event, sourceId: number, query: unknown) => {
+    if (typeof query !== "string" || !query.trim()) return [];
+    const token = await getSpotifyToken(db, await getCipher(), sourceId);
+    return searchTracks(token, query.trim());
+});
 
 void app.whenReady().then(async () => {
     const settings = readSettings(db);

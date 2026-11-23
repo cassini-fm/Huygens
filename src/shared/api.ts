@@ -23,6 +23,7 @@ export type PlayerApi = {
     spotify: {
         connect: (clientId: string) => Promise<MusicSource>;
         token: (id: number) => Promise<string>;
+        search: (sourceId: number, query: string) => Promise<SpotifyTrack[]>;
     };
 };
 
@@ -38,3 +39,13 @@ export type MusicSource = {
 };
 
 export type NewMusicSource = Omit<MusicSource, "id" | "position"> & { password: string };
+
+export type SpotifyTrack = {
+    uri: string;
+    name: string;
+    artists: string[];
+    album: string;
+    cover: string | null;
+    duration: number;
+    isrc: string | null;
+}

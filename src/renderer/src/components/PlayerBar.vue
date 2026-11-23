@@ -131,6 +131,7 @@ onMounted(loadVolume);
 }
 
 .controls {
+    background: none;
     display: flex;
     align-items: center;
     gap: 1rem;
