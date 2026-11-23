@@ -47,7 +47,7 @@ onMounted(load);
                 <span class="rank">{{ index + 1 }}</span>
                 <span class="name">{{ source.name }}</span>
                 <span class="kind">{{ source.kind }}</span>
-                <span class="button" @click="remove(source.id)">Remove</span>
+                <button class="button" @click="remove(source.id)">Remove</button>
             </li>
         </ol>
         <form class="connect" @submit.prevent="connect">

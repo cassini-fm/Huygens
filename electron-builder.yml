@@ -1,5 +1,5 @@
-appId: fm.cassini.player
-productName: Cassini player
+appId: fm.cassini.huygens
+productName: Huygens
 directories:
   buildResources: build
 files:
@@ -13,3 +13,7 @@ linux:
   target:
     - AppImage
     - deb
+electronDownload:
+  mirror: https://github.com/castlabs/electron-releases/releases/download/v45.2.1+wvcus
+afterPack: build/vmp-after-pack.cjs
+afterSign: build/vmp-after-sign.cjs
