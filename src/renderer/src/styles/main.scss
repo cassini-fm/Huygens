@@ -24,6 +24,30 @@
     }
 }
 
+:root[data-theme="huygens"] {
+    --background: #0b0a0a;
+    --surface: #141212;
+    --raised: #1e1b1b;
+    --border: #2b2626;
+    --text: #f6f2f1;
+    --muted: #a39896;
+    --accent: #ff7b5c;
+    --accent-text: #2a0b02;
+    --error: #ff6b8b;
+
+    @media (prefers-color-scheme: light) {
+        --background: #fcfaf9;
+        --surface: #f5f0ee;
+        --raised: #ece5e2;
+        --border: #e0d6d2;
+        --text: #1b1312;
+        --muted: #6d605d;
+        --accent: #c4472a;
+        --accent-text: #ffffff;
+        --error: #b3123f;
+    }
+}
+
 * {
     box-sizing: border-box;
     margin: 0;

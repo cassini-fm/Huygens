@@ -1,5 +1,5 @@
 import { join } from "node:path";
-import { app, BrowserWindow, components, ipcMain, shell } from "electron";
+import { app, BrowserWindow, components, ipcMain, nativeTheme, shell } from "electron";
 import { openDatabase } from "./db";
 import { readSettings, writeSettings } from "./settings";
 import { type Cipher, systemCipher } from "./secrets.js";
@@ -41,7 +41,11 @@ function createWindow() {
 
 ipcMain.handle("api:version", () => app.getVersion());
 ipcMain.handle("api:settings:get", () => readSettings(db));
-ipcMain.handle("api:settings:set", (_event, changes) => writeSettings(db, changes));
+ipcMain.handle("api:settings:set", (_event, changes) => {
+    const settings = writeSettings(db, changes);
+    nativeTheme.themeSource = settings.mode;
+    return settings;
+});
 ipcMain.handle("api:sources:list", () => listSources(db));
 ipcMain.handle("api:sources:reorder", (_event, ids: number[]) => reorderSources(db, ids));
 ipcMain.handle("api:sources:remove", async (_event, id: number) => {
@@ -56,6 +60,9 @@ ipcMain.handle("api:spotify:connect", async (_event, clientId: string) => {
 ipcMain.handle("api:spotify:token", async (_event, id: number) => getSpotifyToken(db, await getCipher(), id));
 
 void app.whenReady().then(async () => {
+    const settings = readSettings(db);
+    nativeTheme.themeSource = settings.mode;
+
     try {
         await components.whenReady();
     } catch (err) {

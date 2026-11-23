@@ -1,5 +1,12 @@
+export const themes = ["enceladus", "huygens"] as const;
+
+export type ThemeName = (typeof themes)[number];
+export type ThemeMode = "system" | "light" | "dark";
+
 export type Settings = {
     volume: number;
+    theme: ThemeName;
+    mode: ThemeMode;
 };
 
 export type PlayerApi = {

@@ -6,6 +6,8 @@ const version = ref("");
 
 onMounted(async () => {
     version.value = await window.player.version();
+    const settings = await window.player.settings.get();
+    document.documentElement.dataset.theme = settings.theme;
 });
 </script>
 
