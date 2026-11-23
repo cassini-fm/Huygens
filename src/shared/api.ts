@@ -8,9 +8,18 @@ export type PlayerApi = {
         get: () => Promise<Settings>;
         set: (changes: Partial<Settings>) => Promise<Settings>;
     };
+    sources: {
+        list: () => Promise<MusicSource[]>;
+        reorder: (ids: number[]) => Promise<void>;
+        remove: (id: number) => Promise<void>;
+    };
+    spotify: {
+        connect: (clientId: string) => Promise<MusicSource>;
+        token: (id: number) => Promise<string>;
+    };
 };
 
-export type SourceKind = "";
+export type SourceKind = "spotify";
 
 export type MusicSource = {
     id: number;

@@ -41,3 +41,7 @@ export function reorderSources(db: Database, ids: number[]): void {
 export function removeSource(db: Database, id: number): void {
     db.prepare("delete from sources where id = ?;").run(id);
 }
+
+export async function writePassword(db: Database, cipher: Cipher, id: number, password: string): Promise<void> {
+    db.prepare("update sources set secret = ? where id = ?;").run(await cipher.encrypt(password), id);
+}

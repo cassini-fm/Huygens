@@ -8,7 +8,8 @@
     "preview": "electron-vite preview",
     "type-check": "tsc --noEmit -p tsconfig.node.json && vue-tsc --noEmit -p tsconfig.web.json",
     "test": "vitest run",
-    "dist": "electron-vite build && electron-builder"
+    "dist": "electron-vite build && electron-builder",
+    "sign:dev": "py -m castlabs_evs.vmp sign-pkg node_modules/electron/dist"
   },
   "repository": {
     "type": "git",
@@ -27,7 +28,7 @@
   "devDependencies": {
     "@types/node": "^26.6.6",
     "@vitejs/plugin-vue": "^6.0.11",
-    "electron": "^45.4.1",
+    "electron": "github:castlabs/electron-releases#v45.2.1+wvcus",
     "electron-builder": "^26.18.0",
     "electron-vite": "^6.0.0",
     "sass-embedded": "^1.108.2",

@@ -7,6 +7,15 @@ const api: PlayerApi = {
         get: () => ipcRenderer.invoke("api:settings:get"),
         set: (changes) => ipcRenderer.invoke("api:settings:set", changes)
     },
+    sources: {
+        list: () => ipcRenderer.invoke("api:sources:list"),
+        reorder: (ids) => ipcRenderer.invoke("api:sources:reorder", ids),
+        remove: (id) => ipcRenderer.invoke("api:sources:remove", id)
+    },
+    spotify: {
+        connect: (clientId) => ipcRenderer.invoke("api:spotify:connect", clientId),
+        token: (id) => ipcRenderer.invoke("api:spotify:token", id)
+    },
 };
 
 contextBridge.exposeInMainWorld("player", api);

@@ -15,7 +15,7 @@ function fakeCipher(stale = false): Cipher & { encrypted: number } {
     return cipher;
 }
 
-const fakeSource = { kind: "" as const, name: "test", url: "https://example.com", username: "testuser", password: "testpass" };
+const fakeSource = { kind: "spotify" as const, name: "test", url: "https://example.com", username: "testuser", password: "testpass" };
 
 describe("sources", () => {
     it("adds sources at the end and lists them in order", async () => {

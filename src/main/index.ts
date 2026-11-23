@@ -1,9 +1,15 @@
 import { join } from "node:path";
-import { app, BrowserWindow, ipcMain, shell } from "electron";
+import { app, BrowserWindow, components, ipcMain, shell } from "electron";
 import { openDatabase } from "./db";
 import { readSettings, writeSettings } from "./settings";
+import { type Cipher, systemCipher } from "./secrets.js";
+import { listSources, removeSource, reorderSources } from "./sources.js";
+import { connectSpotify, forgetSpotify, getSpotifyToken } from "./spotifyAccount.js";
 
 const db = openDatabase(join(app.getPath("userData"), "player.db"));
+
+let cipher: Promise<Cipher> | undefined;
+const getCipher = () => (cipher ??= systemCipher());
 
 function createWindow() {
     const window = new BrowserWindow({
@@ -36,8 +42,25 @@ function createWindow() {
 ipcMain.handle("api:version", () => app.getVersion());
 ipcMain.handle("api:settings:get", () => readSettings(db));
 ipcMain.handle("api:settings:set", (_event, changes) => writeSettings(db, changes));
+ipcMain.handle("api:sources:list", () => listSources(db));
+ipcMain.handle("api:sources:reorder", (_event, ids: number[]) => reorderSources(db, ids));
+ipcMain.handle("api:sources:remove", async (_event, id: number) => {
+    forgetSpotify(id);
+    removeSource(db, id);
+});
+ipcMain.handle("api:spotify:connect", async (_event, clientId: string) => {
+    const id = clientId.trim();
+    if (!/^[0-9a-f]{32}$/i.test(id)) throw new Error("Invalid Spotify client ID");
+    return connectSpotify(db, await getCipher(), id, (url) => shell.openExternal(url));
+});
+ipcMain.handle("api:spotify:token", async (_event, id: number) => getSpotifyToken(db, await getCipher(), id));
 
-void app.whenReady().then(() => {
+void app.whenReady().then(async () => {
+    try {
+        await components.whenReady();
+    } catch (err) {
+        console.error("Widevine unavailable, Spotify playback will not work.", err);
+    }
     createWindow();
 
     app.on("activate", () => {
