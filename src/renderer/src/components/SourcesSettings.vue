@@ -80,8 +80,8 @@ ol {
         gap: 1rem;
         padding: 0.75rem 1rem;
         border-radius: 0.5rem;
-        background: #121212;
-        border: 1px solid #333;
+        background: var(--surface);
+        border: 1px solid var(--border);
     }
 }
 
@@ -91,7 +91,7 @@ ol {
 }
 
 .rank, .kind, .hint {
-    color: #aaa;
+    color: var(--muted);
 }
 
 .connect {
@@ -108,6 +108,6 @@ ol {
 }
 
 .error {
-    color: #f54343;
+    color: var(--error);
 }
 </style>

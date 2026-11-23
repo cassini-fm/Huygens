@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
+import PlayerBar from "@/components/PlayerBar.vue";
 
 const version = ref("");
 
@@ -18,6 +19,7 @@ onMounted(async () => {
         <main class="content">
             <RouterView />
         </main>
+        <PlayerBar class="bar" />
     </div>
 </template>
 
@@ -25,9 +27,11 @@ onMounted(async () => {
 .layout {
     display: grid;
     grid-template-columns: 200px 1fr;
+    grid-template-rows: minmax(0, 1fr) auto;
     height: 100vh;
 
     .sidebar {
+        background: var(--surface);
         display: flex;
         flex-direction: column;
         gap: 0.5rem;
@@ -46,6 +50,10 @@ onMounted(async () => {
     .content {
         overflow: auto;
         padding: 1.5rem;
+    }
+
+    .bar {
+        grid-column: 1 / -1;
     }
 }
 </style>
