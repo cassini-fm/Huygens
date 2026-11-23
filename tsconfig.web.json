@@ -22,6 +22,6 @@
             "@/*": ["./src/renderer/src/*"],
             "@shared/*": ["./src/shared/*"],
         },
-        "types": ["@types/spotify-web-playback-sdk"],
+        "types": ["@types/spotify-web-playback-sdk", "unplugin-icons/types/vue"],
     },
 }
