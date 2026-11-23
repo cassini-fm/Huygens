@@ -14,6 +14,6 @@ linux:
     - AppImage
     - deb
 electronDownload:
-  mirror: https://github.com/castlabs/electron-releases/releases/download/v45.2.1+wvcus
+  mirror: https://github.com/castlabs/electron-releases/releases/download/
 afterPack: build/vmp-after-pack.cjs
 afterSign: build/vmp-after-sign.cjs
