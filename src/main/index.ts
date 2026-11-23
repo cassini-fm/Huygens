@@ -6,6 +6,7 @@ import { type Cipher, systemCipher } from "./secrets.js";
 import { listSources, removeSource, reorderSources } from "./sources.js";
 import { connectSpotify, forgetSpotify, getSpotifyToken } from "./spotifyAccount.js";
 import { searchTracks } from "./spotify";
+import { isNewListen, recordListen } from "./listens.js";
 
 const db = openDatabase(join(app.getPath("userData"), "player.db"));
 
@@ -63,6 +64,10 @@ ipcMain.handle("api:spotify:search", async (_event, sourceId: number, query: unk
     if (typeof query !== "string" || !query.trim()) return [];
     const token = await getSpotifyToken(db, await getCipher(), sourceId);
     return searchTracks(token, query.trim());
+});
+ipcMain.handle("api:listens:record", (_event, listen: unknown) => {
+    if (!isNewListen(listen)) throw new Error("Invalid listen");
+    return recordListen(db, listen);
 });
 
 void app.whenReady().then(async () => {

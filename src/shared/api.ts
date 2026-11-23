@@ -25,6 +25,9 @@ export type PlayerApi = {
         token: (id: number) => Promise<string>;
         search: (sourceId: number, query: string) => Promise<SpotifyTrack[]>;
     };
+    listens: {
+        record: (listen: NewListen) => Promise<number>;
+    };
 };
 
 export type SourceKind = "spotify";
@@ -49,3 +52,14 @@ export type SpotifyTrack = {
     duration: number;
     isrc: string | null;
 }
+
+export type NewListen = {
+    playedAt: number;
+    artists: string[];
+    track: string;
+    trackId: string | null;
+    album: string | null;
+    duration: number | null;
+    isrc: string | null;
+    source: string;
+};

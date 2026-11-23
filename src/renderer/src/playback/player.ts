@@ -1,6 +1,7 @@
 import { readonly, ref } from "vue";
 import type { MusicSource } from "@shared/api.js"
 import { connectSpotifyPlayback, type SpotifyPlayback } from "./spotify.js";
+import { addHeard, startCandidate } from "./listens.js";
 
 export type NowPlaying = {
     title: string;
@@ -19,6 +20,7 @@ const error = ref("");
 
 let spotify: SpotifyPlayback | undefined;
 let ticker: number | undefined;
+let currentUri: string | null = null;
 
 export function gain(level: number): number {
     const clamped = Math.min(1, Math.max(0, level));
@@ -32,8 +34,14 @@ function stopTicker() {
 
 function tick() {
     stopTicker();
+    let last = performance.now();
     ticker = window.setInterval(() => {
-        if (!paused.value && current.value) position.value = Math.min(current.value.duration, position.value + 250);
+        const now = performance.now();
+        const elapsed = now - last;
+        last = now;
+        if (paused.value || !current.value) return;
+        position.value = Math.min(current.value.duration, position.value + elapsed);
+        addHeard(elapsed);
     }, 250);
 }
 
@@ -44,10 +52,24 @@ async function spotifyPlayback(sourceId: number): Promise<SpotifyPlayback> {
         if (!state) {
             current.value = null;
             paused.value = true;
+            currentUri = null;
             stopTicker();
             return;
         }
         const track = state.track_window.current_track;
+        if (track.uri !== currentUri) {
+            currentUri = track.uri;
+            startCandidate({
+                playedAt: Math.floor(Date.now() / 1000),
+                artists: track.artists.map((artist) => artist.name),
+                track: track.name,
+                trackId: track.uri,
+                album: track.album.name,
+                duration: state.duration,
+                isrc: null,
+                source: "spotify",
+            });
+        }
         current.value = {
             title: track.name,
             artists: track.artists.map((artist) => artist.name),

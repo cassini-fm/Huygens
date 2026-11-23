@@ -17,6 +17,9 @@ const api: PlayerApi = {
         token: (id) => ipcRenderer.invoke("api:spotify:token", id),
         search: (sourceId, query) => ipcRenderer.invoke("api:spotify:search", sourceId, query),
     },
+    listens: {
+        record: (listen) => ipcRenderer.invoke("api:listens:record", listen),
+    },
 };
 
 contextBridge.exposeInMainWorld("player", api);
