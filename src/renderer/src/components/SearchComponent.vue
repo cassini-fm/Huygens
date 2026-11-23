@@ -36,7 +36,7 @@ async function search(text: string) {
 
 function play(index: number) {
     if (source.value === null) return;
-    playTracks(source.value, results.value.slice(index).map((track) => track.uri));
+    playTracks(source.value, [results.value[index]!.uri]);
     query.value = "";
     results.value = [];
 }

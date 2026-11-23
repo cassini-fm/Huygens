@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from "vue";
-import { loadVolume, next, playback, previous, seek, setVolume, toggle } from "@/playback/player";
+import { computed, ref } from "vue";
+import { next, playback, previous, seek, setVolume, toggle } from "@/playback/player";
 import IconPause from "~icons/lucide/pause";
 import IconPlay from "~icons/lucide/play";
 import IconSkipBack from "~icons/lucide/skip-back";
@@ -9,7 +9,6 @@ import IconVolume from "~icons/lucide/volume-2";
 
 const { current, paused, position, volume, error } = playback;
 const seeking = ref<number | null>(null);
-const shown = computed(() => seeking.value ?? position.value);
 
 function time(ms: number): string {
     const total = Math.floor(ms / 1000);
@@ -35,8 +34,6 @@ function onVolume(event: Event) {
 function onVolumeInput(event: Event) {
     void setVolume(Number((event.target as HTMLInputElement).value), false);
 }
-
-onMounted(loadVolume);
 </script>
 
 <template>

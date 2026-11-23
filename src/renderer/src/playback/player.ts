@@ -129,11 +129,35 @@ export const playback = {
 };
 
 export async function next(): Promise<void> {
-    await spotify?.player.nextTrack();
+    const state = await spotify?.player.getCurrentState();
+    if (!spotify || !state) return;
+    if (state.track_window.next_tracks.length === 0) {
+        await spotify.player.nextTrack();
+    } else {
+        await spotify.player.pause();
+        await seek(0);
+    }
 }
 
 export async function previous(): Promise<void> {
-    await spotify?.player.previousTrack();
+    const state = await spotify?.player.getCurrentState();
+    if (!spotify || !state) return;
+    if (state.position > 5000 || state.track_window.previous_tracks.length === 0) {
+        await seek(0);
+    } else {
+        await spotify.player.previousTrack();
+    }
+}
+
+export async function initPlayback(): Promise<void> {
+    const sources = await window.player.sources.list();
+    const source = sources.find((source) => source.kind === "spotify");
+    if (!source) return;
+    try {
+        await spotifyPlayback(source.id);
+    } catch (err) {
+        error.value = err instanceof Error ? err.message : String(err);
+    }
 }
 
 import.meta.hot?.dispose(() => spotify?.disconnect());

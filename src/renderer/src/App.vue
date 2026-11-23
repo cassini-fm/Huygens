@@ -1,11 +1,16 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
+import { setupMediaSession } from "@/playback/mediaSession.js";
+import { initPlayback, loadVolume } from "@/playback/player.js";
 import TrackSearch from "@/components/SearchComponent.vue";
 import PlayerBar from "@/components/PlayerBar.vue";
 
 const version = ref("");
 
 onMounted(async () => {
+    setupMediaSession();
+    await loadVolume();
+    await initPlayback();
     version.value = await window.player.version();
     const settings = await window.player.settings.get();
     document.documentElement.dataset.theme = settings.theme;
