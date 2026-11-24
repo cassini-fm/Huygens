@@ -20,6 +20,9 @@ const api: PlayerApi = {
     listens: {
         record: (listen) => ipcRenderer.invoke("api:listens:record", listen),
     },
+    musicbrainz: {
+        match: (track) => ipcRenderer.invoke("api:musicbrainz:match", track),
+    },
 };
 
 contextBridge.exposeInMainWorld("player", api);

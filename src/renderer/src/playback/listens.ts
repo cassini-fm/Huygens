@@ -2,6 +2,8 @@ import type { NewListen } from "@shared/api.js";
 
 type Candidate = { listen: NewListen; needed: number; heard: number; done: boolean };
 
+const mbids = new Map<string, string>();
+
 let candidate: Candidate | null = null;
 
 export function startCandidate(listen: NewListen): void {
@@ -14,5 +16,11 @@ export function addHeard(ms: number): void {
     candidate.heard += ms;
     if (candidate.heard < candidate.needed) return;
     candidate.done = true;
-    window.player.listens.record(candidate.listen).catch((err) => console.error("Failed to record listen:", err));
+    const listen = candidate.listen;
+    const recordingMbid = listen.trackId ? (mbids.get(listen.trackId) ?? null) : null;
+    window.player.listens.record({ ...listen, recordingMbid }).catch((err) => console.error("Failed to record listen:", err));
+}
+
+export function rememberMbid(uri: string, mbid: string): void {
+    mbids.set(uri, mbid);
 }

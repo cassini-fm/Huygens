@@ -16,6 +16,7 @@ describe("recordListen", () => {
             duration: 18000,
             isrc: null,
             source: "spotify",
+            recordingMbid: null,
         });
         const row = db.prepare("select * from listens where id = ?").get(id) as { artists: string, synced_at: number | null };
         expect(JSON.parse(row.artists)).toEqual(["Artist 1", "Artist 2"]);

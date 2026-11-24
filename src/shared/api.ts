@@ -28,6 +28,9 @@ export type PlayerApi = {
     listens: {
         record: (listen: NewListen) => Promise<number>;
     };
+    musicbrainz: {
+        match: (track: SpotifyTrack) => Promise<Recording | null>;
+    };
 };
 
 export type SourceKind = "spotify";
@@ -62,4 +65,14 @@ export type NewListen = {
     duration: number | null;
     isrc: string | null;
     source: string;
+    recordingMbid: string | null;
+};
+
+export type Recording = {
+    mbid: string;
+    title: string;
+    artists: string[];
+    length: number | null;
+    isrcs: string[];
+    score?: number;
 };

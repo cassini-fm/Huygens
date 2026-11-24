@@ -68,6 +68,7 @@ async function spotifyPlayback(sourceId: number): Promise<SpotifyPlayback> {
                 duration: state.duration,
                 isrc: null,
                 source: "spotify",
+                recordingMbid: null,
             });
         }
         current.value = {

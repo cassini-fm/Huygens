@@ -27,6 +27,7 @@ export function unsyncedListens(db: Database, limit = 100): StoredListen[] {
         duration: row.duration,
         isrc: row.isrc,
         source: row.source,
+        recordingMbid: null,
     }));
 }
 

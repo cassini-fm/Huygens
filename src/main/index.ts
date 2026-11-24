@@ -7,8 +7,10 @@ import { listSources, removeSource, reorderSources } from "./sources.js";
 import { connectSpotify, forgetSpotify, getSpotifyToken } from "./spotifyAccount.js";
 import { searchTracks } from "./spotify";
 import { isNewListen, recordListen } from "./listens.js";
+import { createMusicBrainz, isSpotifyTrack, matchRecording } from "./musicbrainz.js";
 
 const db = openDatabase(join(app.getPath("userData"), "player.db"));
+const musicbrainz = createMusicBrainz(`Huygens/${app.getVersion()} (https://github.com/cassini-fm/huygens)`);
 
 let cipher: Promise<Cipher> | undefined;
 const getCipher = () => (cipher ??= systemCipher());
@@ -68,6 +70,10 @@ ipcMain.handle("api:spotify:search", async (_event, sourceId: number, query: unk
 ipcMain.handle("api:listens:record", (_event, listen: unknown) => {
     if (!isNewListen(listen)) throw new Error("Invalid listen");
     return recordListen(db, listen);
+});
+ipcMain.handle("api:musicbrainz:match", (_event, track: unknown) => {
+    if (!isSpotifyTrack(track)) throw new Error("Invalid track");
+    return matchRecording(musicbrainz, track);
 });
 
 void app.whenReady().then(async () => {

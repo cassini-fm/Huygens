@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { onMounted, ref, watch } from "vue";
+import { onMounted, ref, toRaw, watch } from "vue";
 import type { MusicSource, SpotifyTrack } from "@shared/api.js";
 import { playTracks } from "@/playback/player";
+import { rememberMbid } from "@/playback/listens";
 
 const query = ref("");
 const results = ref<SpotifyTrack[]>([]);
@@ -35,8 +36,10 @@ async function search(text: string) {
 }
 
 function play(index: number) {
-    if (source.value === null) return;
-    playTracks(source.value, [results.value[index]!.uri]);
+    const track = results.value[index];
+    if (source.value === null || !track) return;
+    playTracks(source.value, [track.uri]);
+    window.player.musicbrainz.match(toRaw(track)).then((recording) => recording && rememberMbid(track.uri, recording.mbid)).catch((err) => console.error("MusicBrainz match failed:", err));
     query.value = "";
     results.value = [];
 }
