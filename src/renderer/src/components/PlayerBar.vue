@@ -211,7 +211,7 @@ input[type="range"] {
     }
 
     &:hover {
-        background: linear-gradient(to right, var(--accent_ calc(var(--fill) * 100%)), var(--border) 0);
+        background: linear-gradient(to right, var(--accent calc(var(--fill) * 100%)), var(--border) 0);
 
         &::-webkit-slider-thumb {
             opacity: 1;
