@@ -12,15 +12,20 @@ export type NowPlaying = {
     sourceId: number;
 };
 
+type Saved = { uris: string[]; index: number; position: number; now: NowPlaying };
+
 const current = ref<NowPlaying | null>(null);
 const paused = ref(true);
 const position = ref(0);
 const volume = ref(1);
 const error = ref("");
+const SAVED_KEY = "huygens:playback";
 
 let spotify: SpotifyPlayback | undefined;
 let ticker: number | undefined;
 let currentUri: string | null = null;
+let queue: string[] = [];
+let pending: Saved | null = null;
 
 export function gain(level: number): number {
     const clamped = Math.min(1, Math.max(0, level));
@@ -56,6 +61,7 @@ async function spotifyPlayback(sourceId: number): Promise<SpotifyPlayback> {
             stopTicker();
             return;
         }
+        pending = null;
         const track = state.track_window.current_track;
         if (track.uri !== currentUri) {
             currentUri = track.uri;
@@ -70,6 +76,13 @@ async function spotifyPlayback(sourceId: number): Promise<SpotifyPlayback> {
                 source: "spotify",
                 recordingMbid: null,
             });
+            position.value = 0;
+            window.setTimeout(async () => {
+                const fresh = await playback.player.getCurrentState();
+                if (fresh?.track_window.current_track.uri === currentUri) position.value = fresh.position;
+            }, 500);
+        } else {
+            position.value = state.position;
         }
         current.value = {
             title: track.name,
@@ -80,8 +93,8 @@ async function spotifyPlayback(sourceId: number): Promise<SpotifyPlayback> {
             sourceId,
         };
         paused.value = state.paused;
-        position.value = state.position;
         tick();
+        save();
     });
     playback.player.addListener("playback_error", ({ message }) => (error.value = message));
     await playback.player.setVolume(gain(volume.value));
@@ -94,6 +107,7 @@ export async function playTracks(source: MusicSource, uris: string[], start: num
     try {
         if (source.kind !== "spotify") throw new Error("Unsupported source kind");
         const playback = await spotifyPlayback(source.id);
+        queue = uris;
         await playback.play(uris, start);
     } catch (err) {
         error.value = err instanceof Error ? err.message : String(err);
@@ -101,11 +115,23 @@ export async function playTracks(source: MusicSource, uris: string[], start: num
 }
 
 export async function toggle(): Promise<void> {
+    if (pending && spotify) {
+        const saved = pending;
+        pending = null;
+        try {
+            await spotify.play(saved.uris, saved.index, saved.position);
+        } catch (err) {
+            pending = saved;
+            error.value = err instanceof Error ? err.message : String(err);
+        }
+        return;
+    }
     await spotify?.player.togglePlay();
 }
 
 export async function seek(ms: number): Promise<void> {
     position.value = ms;
+    if (pending) pending.position = ms;
     await spotify?.player.seek(ms);
 }
 
@@ -132,7 +158,7 @@ export const playback = {
 export async function next(): Promise<void> {
     const state = await spotify?.player.getCurrentState();
     if (!spotify || !state) return;
-    if (state.track_window.next_tracks.length === 0) {
+    if (state.track_window.next_tracks.length > 0) {
         await spotify.player.nextTrack();
     } else {
         await spotify.player.pause();
@@ -156,9 +182,36 @@ export async function initPlayback(): Promise<void> {
     if (!source) return;
     try {
         await spotifyPlayback(source.id);
+        const saved = loadSaved();
+        if (saved && !current.value) {
+            pending = saved;
+            queue = saved.uris;
+            current.value = saved.now;
+            position.value = saved.position;
+            paused.value = true;
+            if (sessionStorage.getItem("huygens:playing") === "true") await toggle();
+        }
     } catch (err) {
         error.value = err instanceof Error ? err.message : String(err);
     }
 }
 
 import.meta.hot?.dispose(() => spotify?.disconnect());
+
+function save() {
+    if (!current.value || !currentUri) return;
+    const uris = queue.includes(currentUri) ? queue : [currentUri];
+    const saved: Saved = { uris, index: uris.indexOf(currentUri), position: position.value, now: current.value };
+    localStorage.setItem(SAVED_KEY, JSON.stringify(saved));
+    sessionStorage.setItem("huygens:playing", String(!paused.value));
+}
+
+function loadSaved(): Saved | null {
+    try {
+        return JSON.parse(localStorage.getItem(SAVED_KEY) ?? "null");
+    } catch {
+        return null;
+    }
+}
+
+window.addEventListener("beforeunload", save);
