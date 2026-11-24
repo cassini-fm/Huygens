@@ -76,3 +76,24 @@ export type Recording = {
     isrcs: string[];
     score?: number;
 };
+
+export type Playlist = {
+    id: number;
+    name: string;
+    createdAt: number;
+    count: number;
+};
+
+export type PlaylistEntry = {
+    id: number;
+    position: number;
+    recordingMbid: string | null;
+    title: string;
+    artists: string[];
+    album: string | null;
+    duration: number | null;
+    isrc: string | null;
+    sources: Record<string, string>;
+};
+
+export type NewPlaylistEntry = Omit<PlaylistEntry, "id" | "position">;

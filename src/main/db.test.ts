@@ -11,8 +11,8 @@ describe("database", () => {
     it("creates the tables and records the schema version", () => {
         const db = openDatabase(":memory:");
         const tables = db.prepare("select name from sqlite_master where type='table' order by name;").all() as { name: string }[];
-        expect(tables.map((row) => row.name)).toEqual(["cassini", "listens", "settings", "sources"]);
-        expect(db.prepare("pragma user_version;").get()).toEqual({ user_version: 3 });
+        expect(tables.map((row) => row.name)).toEqual(["cassini", "entry_sources", "listens", "playlist_entries", "playlists", "settings", "sources"]);
+        expect(db.prepare("pragma user_version;").get()).toEqual({ user_version: 4 });
         db.close();
     });
 
