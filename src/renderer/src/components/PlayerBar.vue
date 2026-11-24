@@ -74,12 +74,12 @@ function onVolumeInput(event: Event) {
 <style scoped lang="scss">
 .player-bar {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 2fr) minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr) minmax(0, 1fr);
     align-items: center;
     gap: 1.5rem;
-    height: 6rem;
+    height: 5.75rem;
     padding: 0 1.25rem;
-    background: var(--background);
+    background: var(--surface);
     border-top: 1px solid var(--border);
 }
 
@@ -88,20 +88,21 @@ function onVolumeInput(event: Event) {
     align-items: center;
     gap: 0.75rem;
     min-width: 0;
+    color: var(--muted);
 }
 
 .cover {
-    width: 4rem;
-    height: 4rem;
+    width: 3.5rem;
+    height: 3.5rem;
     flex: none;
     border-radius: 0.25rem;
-    background: var(--surface) center / cover no-repeat;
+    background: var(--raised) center / cover no-repeat;
 }
 
 .text {
     display: flex;
     flex-direction: column;
-    gap: 0.25rem;
+    gap: 0.2rem;
     min-width: 0;
 }
 
@@ -113,11 +114,11 @@ function onVolumeInput(event: Event) {
 
 .title {
     font-weight: bold;
+    color: var(--text);
 }
 
 .artist {
-    font-size: 0.9rem;
-    color: var(--text);
+    font-size: 0.8rem;
 }
 
 .center {
@@ -128,33 +129,35 @@ function onVolumeInput(event: Event) {
 }
 
 .controls {
-    background: none;
     display: flex;
     align-items: center;
     gap: 1rem;
 
     button {
-        background: none;
-        border: 0;
-        color: var(--text);
-        cursor: pointer;
-        font-size: 1rem;
-        
-        &:disabled {
-            opacity: 0.4;
-            cursor: default;
-        }
-    }
-
-    .play {
         display: flex;
         align-items: center;
         justify-content: center;
+        width: 2rem;
+        height: 2rem;
+        color: var(--text);
+    }
+
+    svg {
+        width: 1.25rem;
+        height: 1.25rem;
+    }
+
+    .play {
         width: 2.5rem;
         height: 2.5rem;
         border-radius: 50%;
-        background: var(--accent) !important;
-        color: var(--accent-text) !important;
+        background: var(--text);
+        color: var(--background);
+
+        svg {
+            width: 1.125rem;
+            height: 1.125rem;
+        }
     }
 
     :deep(svg path) {
@@ -164,28 +167,35 @@ function onVolumeInput(event: Event) {
 .progress {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.6rem;
     width: 100%;
     max-width: 36rem;
     font-size: 0.75rem;
-    color: var(--accent);
+    color: var(--muted);
 
     input {
+        --track: var(--accent);
         flex: 1;
     }
 }
 
 .error {
     font-size: 0.75rem;
-    color: var(--error);
 }
 
 .volume {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.6rem;
     justify-self: end;
     width: 10rem;
+
+    svg {
+        flex: none;
+        width: 1.125rem;
+        height: 1.125rem;
+    }
+
     input {
         width: 100%;
     }
@@ -208,12 +218,8 @@ input[type="range"] {
         background: var(--text);
         opacity: 0;
         transition: opacity 0.15s;
-    }
 
-    &:hover {
-        background: linear-gradient(to right, var(--accent calc(var(--fill) * 100%)), var(--border) 0);
-
-        &::-webkit-slider-thumb {
+        &:hover {
             opacity: 1;
         }
     }
@@ -221,6 +227,10 @@ input[type="range"] {
     &:disabled {
         cursor: default;
         opacity: 0.5;
+
+        &::-webkit-slider-thumb {
+            opacity: 0;
+        }
     }
 }
 </style>

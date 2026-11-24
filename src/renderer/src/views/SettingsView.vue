@@ -22,26 +22,73 @@ onMounted(async () => {
 </script>
 
 <template>
-    <h1>Settings</h1>
-    <div v-if="settings" class="settings">
-        <label for="theme">Theme</label>
-        <select id="theme" :value="settings.theme" @change="setTheme">
-            <option v-for="theme in themes" :key="theme" :value="theme">{{ theme[0]?.toUpperCase() + theme.slice(1) }}</option>
-        </select>
-        <label for="mode">Mode</label>
-        <select id="mode" :value="settings.mode" @change="setMode">
-            <option v-for="mode in ['system', 'light', 'dark']" :key="mode" :value="mode">{{ mode[0]?.toUpperCase() + mode.slice(1) }}</option>
-        </select>
+    <div class="page">
+        <h1>Settings</h1>
+        <section class="appearance">
+            <h2>Appearance</h2>
+            <div v-if="settings" class="settings">
+                <div class="row">
+                    <label for="theme">Theme</label>
+                    <select id="theme" class="input" :value="settings.theme" @change="setTheme">
+                        <option v-for="theme in themes" :key="theme" :value="theme">{{ theme[0]?.toUpperCase() + theme.slice(1) }}</option>
+                    </select>
+                </div>
+                <div class="row">
+                    <label for="mode"`>Mode</label>
+                    <select id="mode" class="input" :value="settings.mode" @change="setMode">
+                        <option v-for="mode in ['system', 'light', 'dark']" :key="mode" :value="mode">{{ mode[0]?.toUpperCase() + mode.slice(1) }}</option>
+                    </select>
+                </div>
+            </div>
+        </section>
+        <SourcesSettings />
     </div>
-    <SourcesSettings />
 </template>
 
 <style scoped lang="scss">
-.settings {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: auto auto;
-    align-items: center;
+.page {
+    display: flex;
+    flex-direction: column;
+    gap: 2.25rem;
+}
+
+.appearance {
+    display: flex;
+    flex-direction: column;
     gap: 1rem;
+}
+
+.settings {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--border);
+    border-radius: 0.5rem;
+    background: var(--surface);
+
+    label {
+        font-size: 0.8rem;
+        font-weight: bold;
+        color: var(--muted);
+    }
+}
+
+.row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    padding: 0.8rem 1.25rem;
+
+    & + .row {
+        border-top: 1px solid var(--border);
+    }
+
+    label {
+        font-weight: bold;
+    }
+
+    select {
+        width: 16rem;
+    }
 }
 </style>

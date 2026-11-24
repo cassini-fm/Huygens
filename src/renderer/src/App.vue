@@ -50,8 +50,8 @@ onMounted(async () => {
                     <span>Playlists</span>
                     <button class="add" aria-label="New Playlist" @click="startCreating"><IconPlus /></button>
                 </div>
-                <input type="text" v-if="creating" ref="nameField" v-model="newName" placeholder="Playlist name" aria-label="New Playlist Name" @keydown.enter="createPlaylist" @keydown.esc="creating = false" @blur="createPlaylist" />
-                <RouterLink v-for="playlist in library.playlists.value" :key="playlist.id" :to="`/playlist/${playlist.id}`">
+                <input type="text" v-if="creating" ref="nameField" v-model="newName" class="new-name" placeholder="Playlist name" aria-label="New Playlist Name" @keydown.enter="createPlaylist" @keydown.esc="creating = false" @blur="createPlaylist" />
+                <RouterLink v-for="playlist in library.playlists.value" :key="playlist.id" :to="`/playlist/${playlist.id}`" class="playlist">
                     <span class="cover" aria-hidden="true"></span>
                     <span class="info">
                         <span class="name">{{ playlist.name }}</span>
@@ -88,6 +88,15 @@ onMounted(async () => {
     padding: 1.5rem 1rem 1.25rem;
     border-right: 1px solid var(--border);
     
+    & > a {
+        display: flex;
+        align-items: center;
+        gap: 0.9rem;
+        padding: 0.5rem;
+        font-size: 0.9rem;
+        font-weight: bold;
+    }
+
     a {
         text-decoration: none;
         border-radius: 0.25rem;
@@ -109,29 +118,7 @@ nav {
         gap: 0.9rem;
         padding: 0.5rem;
         font-size: 0.9rem;
-        font-weight: bold;
     }
-}
-
-.playlists {
-    display: flex;
-    flex-direction: column;
-    gap: 0.4rem;
-    flex: 1;
-    min-height: 0;
-    overflow-y: auto;
-}
-
-.heading {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    font-size: 0.75rem;
-    padding: 0 0.5rem 0.5rem;
-    font-weight: bold;
-    letter-spacing: 0.1rem;
-    text-transform: uppercase;
-    color: var(--muted);
 }
 
 .add {
@@ -208,7 +195,7 @@ nav {
     text-overflow: ellipsis;
     white-space: nowrap;
     font-size: 0.9rem;
-    font-weight: semibold;
+    font-weight: 500;
 }
 
 .meta {
@@ -220,11 +207,12 @@ nav {
     color: var(--muted);
     font-size: 0.75rem;
     padding: 0.9rem 0.5rem 0;
+    border-top: 1px solid var(--border);
 }
 
 .content {
     overflow: auto;
-    padding: 1.5rem;
+    padding: 2.25rem 3rem 3rem;
     flex: 1;
 }
 
@@ -239,6 +227,28 @@ nav {
 }
 
 .top {
-    padding: 1rem 1.5rem 0;
+    padding: 1.5rem 3rem 0;
 }
+
+.playlists {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+}
+
+.heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    padding: 0 0.5rem 0.5rem;
+    font-weight: bold;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+}
+
 </style>

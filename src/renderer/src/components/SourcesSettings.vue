@@ -45,16 +45,20 @@ onMounted(load);
         <ol>
             <li v-for="(source, index) in sources" :key="source.id">
                 <span class="rank">{{ index + 1 }}</span>
-                <span class="name">{{ source.name }}</span>
-                <span class="kind">{{ source.kind }}</span>
+                <span class="info">
+                    <span class="name">{{ source.name }}</span>
+                    <span class="kind">{{ source.kind }}</span>
+                </span>
                 <button class="button" @click="remove(source.id)">Remove</button>
             </li>
         </ol>
-        <form class="connect" @submit.prevent="connect">
-            <label for="spotify-client-id">Spotify Client ID</label>
-            <input id="spotify-client-id" v-model="clientId" spellcheck="false" autocomplete="off" />
-            <button type="submit" :disabled="loading || !clientId">{{ loading ? "Waiting for Spotify..." : "Connect Spotify" }}</button>
-        </form>
+        <div class="card">
+            <form class="connect" @submit.prevent="connect">
+                <label for="spotify-client-id">Spotify Client ID</label>
+                <input class="input" id="spotify-client-id" v-model="clientId" spellcheck="false" autocomplete="off" />
+                <button class="button primary" type="submit" :disabled="loading || !clientId">{{ loading ? "Waiting for Spotify..." : "Connect Spotify" }}</button>
+            </form>
+        </div>
         <p v-if="loading" class="hint">Finish logging in in your browser.</p>
         <p v-if="error" class="error">{{ error }}</p>
     </section>
@@ -65,7 +69,6 @@ onMounted(load);
     display: flex;
     flex-direction: column;
     gap: 1rem;
-    max-width: 640px;
 }
 
 ol {
@@ -78,36 +81,54 @@ ol {
         display: flex;
         align-items: center;
         gap: 1rem;
-        padding: 0.75rem 1rem;
+        padding: 1rem;
         border-radius: 0.5rem;
         background: var(--surface);
         border: 1px solid var(--border);
     }
 }
 
-.name {
-    flex: 1;
+.rank {
+    width: 1.25rem;
     font-weight: bold;
-}
-
-.rank, .kind, .hint {
     color: var(--muted);
 }
 
-.connect {
+.info {
     display: flex;
-    align-items: flex-end;
-    gap: 0.75rem;
-
-    label {
-        display: flex;
-        flex-direction: column;
-        gap: 0.5rem;
-        flex: 1;
-    }
+    align-items: baseline;
+    gap: 0.5rem;
+    flex: 1;
+    min-width: 0;
 }
 
-.error {
-    color: var(--error);
+.name {
+    font-size: 0.9rem;
+    font-weight: bold;
+}
+
+.kind {
+    font-size: 0.75rem;
+    color: var(--muted);
+}
+
+.card {
+    padding: 1.25rem;
+    border: 1px solid var(--border);
+    border-radius: 0.5rem;
+    background: var(--surface);
+}
+
+.connect {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 0.5rem 0.75rem;
+
+    label {
+        grid-column: 1 / -1;
+        font-size: 0.8rem;
+        font-weight: bold;
+        color: var(--muted);
+    }
 }
 </style>
