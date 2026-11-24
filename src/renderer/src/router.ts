@@ -4,6 +4,7 @@ import HomeView from "@/views/HomeView.vue";
 const routes = [
     { path: "/", name: "Home", component: HomeView },
     { path: "/settings", name: "Settings", component: () => import("@/views/SettingsView.vue") },
+    { path: "/playlist/:id", name: "Playlist", component: () => import("@/views/PlaylistView.vue"), props: true },
 ];
 
 export default createRouter({

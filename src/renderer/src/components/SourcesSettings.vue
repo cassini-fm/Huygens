@@ -90,7 +90,7 @@ ol {
 
 .rank {
     width: 1.25rem;
-    font-weight: bold;
+    font-weight: 600;
     color: var(--muted);
 }
 
@@ -104,7 +104,7 @@ ol {
 
 .name {
     font-size: 0.9rem;
-    font-weight: bold;
+    font-weight: 600;
 }
 
 .kind {
@@ -127,7 +127,7 @@ ol {
     label {
         grid-column: 1 / -1;
         font-size: 0.8rem;
-        font-weight: bold;
+        font-weight: 600;
         color: var(--muted);
     }
 }

@@ -16,3 +16,8 @@ export async function newPlaylist(name: string): Promise<Playlist> {
 export const library = {
     playlists: readonly(playlists),
 };
+
+export async function deletePlaylist(id: number): Promise<void> {
+    await window.player.playlists.delete(id);
+    await refreshPlaylists();
+}

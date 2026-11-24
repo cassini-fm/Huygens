@@ -89,12 +89,12 @@ async function spotifyPlayback(sourceId: number): Promise<SpotifyPlayback> {
     return playback;
 }
 
-export async function playTracks(source: MusicSource, uris: string[]): Promise<void> {
+export async function playTracks(source: MusicSource, uris: string[], start: number = 0): Promise<void> {
     error.value = "";
     try {
         if (source.kind !== "spotify") throw new Error("Unsupported source kind");
         const playback = await spotifyPlayback(source.id);
-        await playback.play(uris);
+        await playback.play(uris, start);
     } catch (err) {
         error.value = err instanceof Error ? err.message : String(err);
     }

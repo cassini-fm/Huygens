@@ -79,8 +79,7 @@ function onVolumeInput(event: Event) {
     gap: 1.5rem;
     height: 5.75rem;
     padding: 0 1.25rem;
-    background: var(--surface);
-    border-top: 1px solid var(--border);
+    background: transparent;
 }
 
 .now {
@@ -113,7 +112,7 @@ function onVolumeInput(event: Event) {
 }
 
 .title {
-    font-weight: bold;
+    font-weight: 600;
     color: var(--text);
 }
 

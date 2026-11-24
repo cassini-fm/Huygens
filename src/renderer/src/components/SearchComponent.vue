@@ -167,7 +167,7 @@ onMounted(async () => {
 }
 
 .title {
-    font-weight: bold;
+    font-weight: 60;
 }
 
 .artists, .album, .time {

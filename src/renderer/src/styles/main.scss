@@ -9,6 +9,7 @@
     --accent: #7cc4ff;
     --accent-text: #04182b;
     --error: #ff8a8a;
+    --chrome: #1c1c1f;
 
     @media (prefers-color-scheme: light) {
         color-scheme: light;
@@ -21,6 +22,7 @@
         --accent: #1f68c7;
         --accent-text: #ffffff;
         --error: #c62828;
+        --chrome: #ececef;
     }
 }
 
@@ -48,17 +50,23 @@
     }
 }
 
+:root[data-material] {
+    --chrome: transparent;
+}
+
 * {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
+    scrollbar-width: thin;
+    scrollbar-color: color-mix(in srgb, var(--text) 20%, transparent) transparent;
 }
 
 body {
     font-family: "Inter Variable", system-ui, sans-serif;
     font-size: 0.9rem;
     -webkit-font-smoothing: antialiased;
-    background-color: var(--background);
+    background-color: var(--chrome);
     color: var(--text);
 }
 
@@ -101,7 +109,7 @@ h2 {
     border: 1px solid var(--border);
     border-radius: 0.25rem;
     font-size: 0.8rem;
-    font-weight: bold;
+    font-weight: 500;
 
     &.primary {
         height: 2.5rem;

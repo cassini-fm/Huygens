@@ -50,6 +50,7 @@ onMounted(async () => {
     display: flex;
     flex-direction: column;
     gap: 2.25rem;
+    padding: 2.25rem 3rem 3rem;
 }
 
 .appearance {
@@ -67,7 +68,7 @@ onMounted(async () => {
 
     label {
         font-size: 0.8rem;
-        font-weight: bold;
+        font-weight: 500;
         color: var(--muted);
     }
 }
@@ -84,7 +85,7 @@ onMounted(async () => {
     }
 
     label {
-        font-weight: bold;
+        font-weight: 500;
     }
 
     select {

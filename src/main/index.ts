@@ -1,5 +1,6 @@
 import { join } from "node:path";
 import { app, BrowserWindow, components, ipcMain, nativeTheme, shell } from "electron";
+import { release } from "node:os";
 import { openDatabase } from "./db";
 import { readSettings, writeSettings } from "./settings";
 import { type Cipher, systemCipher } from "./secrets.js";
@@ -16,6 +17,9 @@ const musicbrainz = createMusicBrainz(`Huygens/${app.getVersion()} (https://gith
 let cipher: Promise<Cipher> | undefined;
 const getCipher = () => (cipher ??= systemCipher());
 
+const windows11 = process.platform === "win32" && Number(release().split(".")[2]) >= 22000;
+const material = windows11 ? { backgroundMaterial: "mica" as const } : process.platform === "darwin" ? { vibrancy: "sidebar" as const } : {};
+
 function createWindow() {
     const window = new BrowserWindow({
         width: 1200,
@@ -23,11 +27,14 @@ function createWindow() {
         minWidth: 800,
         minHeight: 600,
         show: false,
+        titleBarStyle: "hidden",
+        titleBarOverlay: { color: "#00000000", symbolColor: "#eef3f9", height: 48 },
+        ...material,
         webPreferences: {
             preload: join(__dirname, "../preload/index.js"),
             contextIsolation: true,
             nodeIntegration: false,
-            sandbox: true
+            sandbox: true,
         },
     });
 
@@ -37,11 +44,22 @@ function createWindow() {
         return { action: "deny" };
     });
 
+    const hasMaterial = Object.keys(material).length > 0;
+
     if (process.env.ELECTRON_RENDERER_URL) {
-        void window.loadURL(process.env.ELECTRON_RENDERER_URL);
+        const url = new URL(process.env.ELECTRON_RENDERER_URL);
+        if (hasMaterial) url.searchParams.set("material", "1");
+        void window.loadURL(url.toString());
     } else {
-        void window.loadFile(join(__dirname, "../renderer/index.html"));
+        void window.loadFile(join(__dirname, "../renderer/index.html"), hasMaterial ? { query: { material: "1" } } : {});
     }
+
+    function updateOverlay() {
+        window.setTitleBarOverlay({ color: "#00000000", symbolColor: nativeTheme.shouldUseDarkColors ? "#eef3f9" : "#04182b", height: 48 });
+    }
+    updateOverlay();
+    nativeTheme.on("updated", () => updateOverlay);
+    window.on("closed", () => nativeTheme.off("updated", () => updateOverlay))
 }
 
 ipcMain.handle("api:version", () => app.getVersion());

@@ -8,4 +8,6 @@ const app = createApp(App);
 
 app.use(router);
 
+if (new URLSearchParams(location.search).has("material")) document.documentElement.dataset.material = "";
+
 app.mount("#app");

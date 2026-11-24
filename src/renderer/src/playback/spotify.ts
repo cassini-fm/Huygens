@@ -20,7 +20,7 @@ function loadSDK(): Promise<void> {
 
 export type SpotifyPlayback = {
     player: Spotify.Player;
-    play: (uris: string[]) => Promise<void>;
+    play: (uris: string[], start?: number) => Promise<void>;
     disconnect: () => void;
 };
 
@@ -54,9 +54,9 @@ export async function connectSpotifyPlayback(sourceId: number, name = "Player"):
 
     return {
         player,
-        play: async (uris) => {
+        play: async (uris, start = 0) => {
             await api("PUT", "/me/player", { device_ids: [deviceId], play: false });
-            await api("PUT", `/me/player/play?device_id=${deviceId}`, { uris });
+            await api("PUT", `/me/player/play?device_id=${deviceId}`, { uris, offset: { position: start } });
         },
         disconnect: () => player.disconnect(),
     };
