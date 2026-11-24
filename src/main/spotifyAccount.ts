@@ -8,6 +8,7 @@ type Stored = { clientId: string; refreshToken: string };
 
 const EXPIRY_MARGIN = 60 * 1000;
 const cache = new Map<number, SpotifyTokens>();
+const inflight = new Map<number, Promise<SpotifyTokens>>();
 
 export async function connectSpotify(db: Database, cipher: Cipher, clientId: string, open: (url: string) => Promise<void>, fetcher: typeof fetch = fetch): Promise<MusicSource> {
     const tokens = await login(clientId, open, fetcher);
@@ -18,20 +19,29 @@ export async function connectSpotify(db: Database, cipher: Cipher, clientId: str
     return source;
 }
 
+export function forgetSpotify(id: number): void {
+    cache.delete(id);
+}
+
+async function renew(db: Database, cipher: Cipher, id: number, fetcher: typeof fetch = fetch): Promise<SpotifyTokens> {
+    const plain = await readPassword(db, cipher, id);
+    if (!plain) throw new SpotifyError("No stored credentials for this source");
+    const stored = JSON.parse(plain) as Stored;
+    const tokens = await refresh(stored.clientId, stored.refreshToken, fetcher);
+    if (tokens.refreshToken !== stored.refreshToken) {
+        await writePassword(db, cipher, id, JSON.stringify({ ...stored, refreshToken: tokens.refreshToken }));
+    }
+    cache.set(id, tokens);
+    return tokens;
+}
+
 export async function getSpotifyToken(db: Database, cipher: Cipher, id: number, fetcher: typeof fetch = fetch): Promise<string> {
     const cached = cache.get(id);
     if (cached && cached.expiresAt - EXPIRY_MARGIN > Date.now()) return cached.accessToken;
-
-    const plain = await readPassword(db, cipher, id);
-    if (!plain) throw new SpotifyError("No stored credentials for this source");
-
-    const stored = JSON.parse(plain) as Stored;
-    const tokens = await refresh(stored.clientId, stored.refreshToken, fetcher);
-    if (tokens.refreshToken !== stored.refreshToken) await writePassword(db, cipher, id, JSON.stringify({ ...stored, refreshToken: tokens.refreshToken }));
-    cache.set(id, tokens);
-    return tokens.accessToken;
-}
-
-export function forgetSpotify(id: number): void {
-    cache.delete(id);
+    let pending = inflight.get(id);
+    if (!pending) {
+        pending = renew(db, cipher, id, fetcher).finally(() => inflight.delete(id));
+        inflight.set(id, pending);
+    }
+    return (await pending).accessToken;
 }

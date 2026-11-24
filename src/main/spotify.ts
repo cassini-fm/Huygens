@@ -65,7 +65,7 @@ async function tokenRequest(body: Record<string, string>, fetcher: typeof fetch)
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body: new URLSearchParams(body)
     });
-    if (!response.ok) throw new SpotifyError(`Token request failed: ${response.status} ${response.statusText}`);
+    if (!response.ok) throw new SpotifyError(`Token request failed: ${response.status} ${await response.text()}`);
     return (await response.json()) as TokenResponse;
 }
 

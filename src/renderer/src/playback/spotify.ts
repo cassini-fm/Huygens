@@ -2,6 +2,7 @@ const SDK_URL = "https://sdk.scdn.co/spotify-player.js";
 const API = "https://api.spotify.com/v1";
 
 let sdk: Promise<void> | undefined;
+let failConnect: (error: Error) => void = () => {};
 
 function loadSDK(): Promise<void> {
     sdk ??= new Promise((resolve, reject) => {
@@ -29,9 +30,10 @@ export async function connectSpotifyPlayback(sourceId: number, name = "Player"):
     const player = new Spotify.Player({
         name,
         volume: 1,
-        getOAuthToken: (callback) => { token().then(callback, (e) => console.error("Failed to get Spotify token", e))},
+        getOAuthToken: (callback) => { token().then(callback, (e) => failConnect(e instanceof Error ? e : new Error(String(e)))) },
     });
     const deviceId = await new Promise<string>((resolve, reject) => {
+        failConnect = reject;
         player.addListener("ready", ({ device_id }) => resolve(device_id));
         for (const event of ["initialization_error", "authentication_error", "account_error", "playback_error"] as const) {
             player.addListener(event, ({ message }) => reject(new Error(message)));

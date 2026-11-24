@@ -31,12 +31,12 @@ async function createPlaylist() {
 
 onMounted(async () => {
     setupMediaSession();
-    await loadVolume();
-    await initPlayback();
-    await refreshPlaylists();
-    version.value = await window.player.version();
     const settings = await window.player.settings.get();
     document.documentElement.dataset.theme = settings.theme;
+    await loadVolume();
+    await refreshPlaylists();
+    version.value = await window.player.version();
+    await initPlayback();
 });
 </script>
 
