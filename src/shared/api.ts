@@ -31,6 +31,16 @@ export type PlayerApi = {
     musicbrainz: {
         match: (track: SpotifyTrack) => Promise<Recording | null>;
     };
+    playlists: {
+        list: () => Promise<Playlist[]>;
+        create: (name: string) => Promise<Playlist>;
+        rename: (id: number, name: string) => Promise<void>;
+        delete: (id: number) => Promise<void>;
+        entries: (id: number) => Promise<PlaylistEntry[]>;
+        add: (playlistId: number, entry: NewPlaylistEntry) => Promise<number>;
+        remove: (playlistId: number, entryId: number) => Promise<void>;
+        move: (playlistId: number, entryId: number, to: number) => Promise<void>;
+    };
 };
 
 export type SourceKind = "spotify";

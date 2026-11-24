@@ -8,6 +8,7 @@ import { connectSpotify, forgetSpotify, getSpotifyToken } from "./spotifyAccount
 import { searchTracks } from "./spotify";
 import { isNewListen, recordListen } from "./listens.js";
 import { createMusicBrainz, isSpotifyTrack, matchRecording } from "./musicbrainz.js";
+import { addEntry, createPlaylist, deletePlaylist, isNewPlaylistEntry, listPlaylists, playlistEntries, removeEntry, renamePlaylist, reorderEntries, validName } from "./playlists";
 
 const db = openDatabase(join(app.getPath("userData"), "player.db"));
 const musicbrainz = createMusicBrainz(`Huygens/${app.getVersion()} (https://github.com/cassini-fm/huygens)`);
@@ -75,6 +76,17 @@ ipcMain.handle("api:musicbrainz:match", (_event, track: unknown) => {
     if (!isSpotifyTrack(track)) throw new Error("Invalid track");
     return matchRecording(musicbrainz, track);
 });
+ipcMain.handle("api:playlists:list", () => listPlaylists(db));
+ipcMain.handle("api:playlists:create", (_event, name: unknown) => createPlaylist(db, validName(name)));
+ipcMain.handle("api:playlists:rename", (_event, id: number, name: unknown) => renamePlaylist(db, id, validName(name)));
+ipcMain.handle("api:playlists:delete", (_event, id: number) => deletePlaylist(db, id));
+ipcMain.handle("api:playlists:entries", (_event, id: number) => playlistEntries(db, id));
+ipcMain.handle("api:playlists:add", (_event, playlistId: number, entry: unknown) => {
+    if (!isNewPlaylistEntry(entry)) throw new Error("Invalid playlist entry");
+    return addEntry(db, playlistId, entry);
+});
+ipcMain.handle("api:playlists:remove", (_event, playlistId: number, entryId: number) => removeEntry(db, playlistId, entryId));
+ipcMain.handle("api:playlists:move", (_event, playlistId: number, entryId: number, to: number) => reorderEntries(db, playlistId, entryId, to));
 
 void app.whenReady().then(async () => {
     const settings = readSettings(db);

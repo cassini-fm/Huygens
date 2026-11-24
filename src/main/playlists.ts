@@ -1,6 +1,8 @@
 import type { Database } from "./db.js";
 import type { NewPlaylistEntry, Playlist, PlaylistEntry } from "../shared/api.js";
 
+const maybe = (value: unknown, type: "string" | "number") => value === null || typeof value === type;
+
 function transaction<T>(db: Database, work: () => T): T {
     db.exec("begin transaction;");
     try {
@@ -83,4 +85,27 @@ export function reorderEntries(db: Database, playlistId: number, entryId: number
         }
         db.prepare("update playlist_entries set position = ? where id = ? and playlist_id = ?").run(target, entryId, row.playlistId);
     });
+}
+
+export function isNewPlaylistEntry(value: unknown): value is NewPlaylistEntry {
+    if (typeof value !== "object" || value === null) return false;
+    const entry = value as Record<string, unknown>;
+    const sources = entry.sources as Record<string, unknown> | null;
+    return (
+        maybe(entry.recordingMbid, "string") &&
+        typeof entry.title === "string" &&
+        Array.isArray(entry.artists) &&
+        entry.artists.every((artist) => typeof artist === "string") &&
+        maybe(entry.album, "string") &&
+        maybe(entry.duration, "number") &&
+        maybe(entry.isrc, "string") &&
+        typeof sources === "object" &&
+        sources !== null &&
+        Object.values(sources).every((ref) => typeof ref === "string")
+    );
+}
+
+export function validName(name: unknown): string {
+    if (typeof name !== "string" || !name.trim() || name.length > 128) throw new Error("Invalid playlist name"); 
+    return name.trim();
 }

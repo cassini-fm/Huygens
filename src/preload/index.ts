@@ -23,6 +23,16 @@ const api: PlayerApi = {
     musicbrainz: {
         match: (track) => ipcRenderer.invoke("api:musicbrainz:match", track),
     },
+    playlists: {
+        list: () => ipcRenderer.invoke("api:playlists:list"),
+        create: (name) => ipcRenderer.invoke("api:playlists:create", name),
+        rename: (id, name) => ipcRenderer.invoke("api:playlists:rename", id, name),
+        delete: (id) => ipcRenderer.invoke("api:playlists:delete", id),
+        entries: (id) => ipcRenderer.invoke("api:playlists:entries", id),
+        add: (playlistId, entry) => ipcRenderer.invoke("api:playlists:add", playlistId, entry),
+        remove: (playlistId, entryId) => ipcRenderer.invoke("api:playlists:remove", playlistId, entryId),
+        move: (playlistId, entryId, to) => ipcRenderer.invoke("api:playlists:move", playlistId, entryId, to),
+    },
 };
 
 contextBridge.exposeInMainWorld("player", api);
