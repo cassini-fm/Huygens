@@ -1,5 +1,5 @@
 import type { Database } from "./db.js";
-import type { NewListen } from "../shared/api.js";
+import type { NewListen, RecentTrack } from "../shared/api.js";
 
 export type Row = {
     id: number;
@@ -11,12 +11,13 @@ export type Row = {
     duration: number | null;
     isrc: string | null;
     source: string;
+    cover: string | null;
 };
 
 export type StoredListen = NewListen & { id: number };
 
 export function unsyncedListens(db: Database, limit = 100): StoredListen[] {
-    const rows = db.prepare(`select id, played_at, artists, track, track_id, album, duration, isrc, source from listens where synced_at is null order by played_at asc limit ?`).all(limit) as Row[];
+    const rows = db.prepare(`select id, played_at, artists, track, track_id, album, duration, isrc, source, cover from listens where synced_at is null order by played_at asc limit ?`).all(limit) as Row[];
     return rows.map((row) => ({
         id: row.id,
         playedAt: row.played_at,
@@ -27,6 +28,7 @@ export function unsyncedListens(db: Database, limit = 100): StoredListen[] {
         duration: row.duration,
         isrc: row.isrc,
         source: row.source,
+        cover: row.cover,
         recordingMbid: null,
     }));
 }
@@ -70,6 +72,27 @@ export function isNewListen(value: unknown): value is NewListen {
         (listen.album === null || typeof listen.album === "string") &&
         (listen.duration === null || Number.isInteger(listen.duration)) &&
         (listen.isrc === null || typeof listen.isrc === "string") &&
-        typeof listen.source === "string"
+        typeof listen.source === "string" &&
+        (listen.recordingMbid === null || typeof listen.recordingMbid === "string") &&
+        (listen.cover === null || typeof listen.cover === "string")
     );
+}
+
+export function recentTracks(db: Database, limit = 10): RecentTrack[] {
+    const rows = db.prepare(`select track_id, track, artists, album, cover, recording_mbid, max(played_at) as last_played
+            from listens
+            where track_id is not null
+            group by track_id
+            order by last_played desc
+            limit ?`)
+        .all(limit) as { track_id: string; track: string; artists: string; album: string | null; cover: string | null; recording_mbid: string | null; last_played: string }[];
+    return rows.map((row) => ({
+        trackId: row.track_id,
+        title: row.track,
+        artists: JSON.parse(row.artists) as string[],
+        album: row.album,
+        cover: row.cover,
+        recordingMbid: row.recording_mbid,
+        playedAt: Number(row.last_played),
+    }));
 }

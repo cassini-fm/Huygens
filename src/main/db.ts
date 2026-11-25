@@ -63,6 +63,7 @@ const migrations = [
         track_ref text not null,
         primary key (entry_id, kind)
     );`,
+    `alter table listens add column cover text;`,
 ];
 
 export type Database = DatabaseSync;

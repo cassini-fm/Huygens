@@ -47,15 +47,16 @@ onMounted(async () => {
         <header class="titlebar">
             <TrackSearch class="search" />
         </header>
-        <nav class="sidebar">
-            <RouterLink to="/">
-                <IconHouse />
-                Home
-            </RouterLink>
-            <RouterLink to="/settings">
-                <IconSettings />
-                Settings
-            </RouterLink>
+        <nav class="sidebar" aria-label="Sidebar">
+            <div class="branding">
+                <span>Huygens</span>
+            </div>
+            <div class="group">
+                <RouterLink to="/">
+                    <IconHouse />
+                    Home
+                </RouterLink>
+            </div>
             <div class="playlists">
                 <div class="heading">
                     <span>Playlists</span>
@@ -70,7 +71,12 @@ onMounted(async () => {
                     </span>
                 </RouterLink>
             </div>
-            <span class="version">v{{ version }}</span>
+            <div class="footer">
+                <RouterLink to="/settings">
+                    <IconSettings />
+                    Settings
+                </RouterLink>
+            </div>
         </nav>
         <div class="column">
             <main class="content">
@@ -104,7 +110,7 @@ onMounted(async () => {
 .sidebar {
     display: flex;
     flex-direction: column;
-    gap: 0.25rem;
+    gap: 1.75rem;
     min-height: 0;
     padding: 1.5rem 1rem 1.25rem;
     
@@ -130,6 +136,28 @@ onMounted(async () => {
         width: 1.25rem;
         height: 1.25rem;
     }
+}
+
+.branding {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0 0.5rem;
+    font-size: 1.125rem;
+    font-weight: 700;
+    user-select: none;
+
+    svg {
+        width: 1.5rem;
+        height: 1.5rem;
+        color: var(--accent);
+    }
+}
+
+.group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
 }
 
 nav {
@@ -261,7 +289,6 @@ nav {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
-    margin-top: 1.5rem;
     flex: 1;
     min-height: 0;
     overflow-y: auto;
@@ -273,10 +300,18 @@ nav {
     justify-content: space-between;
     font-size: 0.75rem;
     padding: 0 0.5rem 0.5rem;
-    font-weight: 500;
+    font-weight: 600;
     letter-spacing: 0.08em;
     text-transform: uppercase;
     color: var(--muted);
+}
+
+.footer {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    padding-top: 0.9rem;
+    border-top: 1px solid var(--border);
 }
 
 </style>

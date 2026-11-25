@@ -75,6 +75,7 @@ async function spotifyPlayback(sourceId: number): Promise<SpotifyPlayback> {
                 isrc: null,
                 source: "spotify",
                 recordingMbid: null,
+                cover: track.album.images[0]?.url ?? null,
             });
             position.value = 0;
             window.setTimeout(async () => {

@@ -19,6 +19,7 @@ const api: PlayerApi = {
     },
     listens: {
         record: (listen) => ipcRenderer.invoke("api:listens:record", listen),
+        recent: (limit) => ipcRenderer.invoke("api:listens:recent", limit),
     },
     musicbrainz: {
         match: (track) => ipcRenderer.invoke("api:musicbrainz:match", track),

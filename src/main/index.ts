@@ -7,7 +7,7 @@ import { type Cipher, systemCipher } from "./secrets.js";
 import { listSources, removeSource, reorderSources } from "./sources.js";
 import { connectSpotify, forgetSpotify, getSpotifyToken } from "./spotifyAccount.js";
 import { searchTracks } from "./spotify";
-import { isNewListen, recordListen } from "./listens.js";
+import { isNewListen, recentTracks, recordListen } from "./listens.js";
 import { createMusicBrainz, isSpotifyTrack, matchRecording } from "./musicbrainz.js";
 import { addEntry, createPlaylist, deletePlaylist, isNewPlaylistEntry, listPlaylists, playlistEntries, removeEntry, renamePlaylist, reorderEntries, validName } from "./playlists";
 
@@ -105,6 +105,7 @@ ipcMain.handle("api:playlists:add", (_event, playlistId: number, entry: unknown)
 });
 ipcMain.handle("api:playlists:remove", (_event, playlistId: number, entryId: number) => removeEntry(db, playlistId, entryId));
 ipcMain.handle("api:playlists:move", (_event, playlistId: number, entryId: number, to: number) => reorderEntries(db, playlistId, entryId, to));
+ipcMain.handle("api:listens:recent", (_event, limit: number) => recentTracks(db, Number.isInteger(limit) ? Math.min(limit as number, 50) : 10));
 
 void app.whenReady().then(async () => {
     const settings = readSettings(db);

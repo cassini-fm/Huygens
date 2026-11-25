@@ -27,6 +27,7 @@ export type PlayerApi = {
     };
     listens: {
         record: (listen: NewListen) => Promise<number>;
+        recent: (limit: number) => Promise<RecentTrack[]>;
     };
     musicbrainz: {
         match: (track: SpotifyTrack) => Promise<Recording | null>;
@@ -76,6 +77,7 @@ export type NewListen = {
     isrc: string | null;
     source: string;
     recordingMbid: string | null;
+    cover: string | null;
 };
 
 export type Recording = {
@@ -107,3 +109,13 @@ export type PlaylistEntry = {
 };
 
 export type NewPlaylistEntry = Omit<PlaylistEntry, "id" | "position">;
+
+export type RecentTrack = {
+    trackId: string;
+    title: string;
+    artists: string[];
+    album: string | null;
+    cover: string | null;
+    recordingMbid: string | null;
+    playedAt: number;
+}
